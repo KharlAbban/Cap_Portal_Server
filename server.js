@@ -23,58 +23,62 @@ app.listen(process.env.PORT_NO, () => {
 const url = "https://identity.ktu.edu.gh/Account/Login";
 
 app.get("/", async (req, res) => {
-    try {
-        // Get Page from server
-        const response = await axios.get(url);
-        // Extract cookie
-        const cookieVal = response.headers["set-cookie"][0].split("=")[1];
+  res.cookie("name", "user");
+  res.render("capHomePage", {verifToken: "Hello"});
+    // try {
+    //     // Get Page from server
+    //     const response = await axios.get(url);
+    //     // Extract cookie
+    //     const cookieVal = response.headers["set-cookie"][0].split("=")[1];
 
-        // Use cheerio to extract hidden input value
-        const $ = cheerio.load(response.data);
-        const verifToken = $("input[name='__RequestVerificationToken']").attr("value");
+    //     // Use cheerio to extract hidden input value
+    //     const $ = cheerio.load(response.data);
+    //     const verifToken = $("input[name='__RequestVerificationToken']").attr("value");
 
-        // Set multiple cookies
-        res.cookie(".AspNetCore.Antiforgery.X0e-rIfhNrk", cookieVal, {
-          secure: true,
-          domain: "identity.ktu.edu.gh",
-          httpOnly: true,
-        });
-        res.cookie(".AspNetCore.Antiforgery.X0e-rIfhNrk", cookieVal, {
-          secure: true,
-          httpOnly: true,
-        });
+    //     // Set multiple cookies
+    //     res.cookie(".AspNetCore.Antiforgery.X0e-rIfhNrk", cookieVal, {
+    //       secure: true,
+    //       // domain: "identity.ktu.edu.gh",
+    //       httpOnly: true,
+    //     });
+
+    //     res.cookie(".AspNetCore.Antiforgery.X0e-rIfhNrk", cookieVal, {
+    //       secure: true,
+    //       httpOnly: true,
+    //     });
         
-        // Render homepage with values
-        res.render("capHomePage", {
-            verifToken
-        });
-    } catch (err) {
-        console.log(err.message);
-    }
+    //     // Render homepage with values
+    //     res.render("capHomePage", {
+    //         verifToken
+    //     });
+    // } catch (err) {
+    //     console.log(err.message);
+    // }
 });
 
 app.post("/", async (req, res) => {
-    const cookie = req.headers.cookie;
-    const {Username, Password, button, RememberLogin, _RequestVerificationToken} = req.body;
-    console.log(Username);
+  const headers = req.headers;
+    const cookie = headers.cookie;
+    // const {Username, Password, button, RememberLogin, _RequestVerificationToken} = req.body;
+    console.log(headers);
 
-    try {
-        const response = await axios.post(url, {
-        //     headers: {
-        // //   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
-        //   "Cookie": cookie
-        //   },
-          body: {
-            Username,
-            Password,
-            button,
-            _RequestVerificationToken,
-            RememberLogin
-          }
-        });
-    } catch (err) {
-        console.log(err.message);
-    }
+    // try {
+    //     const response = await axios.post(url, {
+    //     //     headers: {
+    //     // //   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+    //     //   "Cookie": cookie
+    //     //   },
+    //       body: {
+    //         Username,
+    //         Password,
+    //         button,
+    //         _RequestVerificationToken,
+    //         RememberLogin
+    //       }
+    //     });
+    // } catch (err) {
+    //     console.log(err.message);
+    // }
 });
 
 // app.get("/", async (req, res) => {
@@ -110,3 +114,7 @@ app.post("/", async (req, res) => {
 //     // console.log(req);
 //     res.status(302).redirect("/");
 // });
+
+app.get("*", (req, res) => {
+    res.status(302).redirect("/");
+});
